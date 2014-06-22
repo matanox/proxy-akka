@@ -13,7 +13,18 @@ object Boot extends App {
   // we need an ActorSystem to host our application in
   implicit val system = ActorSystem("spray-actor-system")
 
+  //
   // create and start our service actor
+  // 
+  // need to create an actor per request and use a dispatcher 
+  // (http://doc.akka.io/docs/akka/snapshot/scala/dispatchers.html) that
+  // balances requests between multiple copies of that actor, otherwise
+  // with one actor handling is serialized. Probably the BalancingDispatcher
+  // dispatcher
+  //
+  // See https://github.com/NET-A-PORTER/spray-actor-per-request/blob/master/src/main/scala/com/netaporter/routing/RestRouting.scala
+  // as reference implementation
+  //
   val service = system.actorOf(Props[MyServiceActor], "api-handler")
 
   val logger =  system.actorOf(Props[ArticlioLogger], "logger")
